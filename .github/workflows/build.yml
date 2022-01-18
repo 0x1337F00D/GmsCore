@@ -1,13 +1,27 @@
-name: Build
-on: [pull_request, push]
+name: Build and Deploy
+on:
+  push:
+    branches:
+      - master
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - run: ./gradlew --no-daemon build
+      - name: Build
+        run: ./gradlew --no-daemon build
         env:
           TERM: dumb
           JAVA_OPTS: -Xmx2048m
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v2.3.1
+        with:
+          # Artifact name
+          name: microg-debug.apk
+          # A file, directory or wildcard pattern that describes what to upload
+          path: play-services-core/build/outputs/apk/withMapboxWithNearby/debug/play-services-core-withMapbox-withNearby-debug.apk
+          # The desired behavior if no files are found using the provided path.
